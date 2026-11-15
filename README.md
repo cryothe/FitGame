@@ -1,25 +1,26 @@
 # FitGame
 
-Gamified exercise app — **frontend first**. Turn workouts into quests, earn XP, keep streaks, and unlock achievements.
+Log reps for five exercises and climb ranks: **Bronze → Silver → Gold → Diamond → Champion**.
 
-## Stack (planned)
+## Exercises
 
-- **React** — web frontend (this repo)
-- **Node.js** — API / persistence (later)
-- **Swift** — native iOS client (later)
+Pushups, situps, leg raises, bicep curls, pullups.
 
-## Run locally
+## Rank cutoffs (lifetime reps)
+
+| Rank     | Min reps |
+|----------|----------|
+| Bronze   | 0        |
+| Silver   | 250      |
+| Gold     | 1,000    |
+| Diamond  | 5,000    |
+| Champion | 15,000   |
+
+## Run
 
 ```bash
 npm install
 npm run dev
 ```
 
-## What’s in the frontend
-
-- Home hero with FitGame branding
-- Quest board (Spark Sprint, Core Rift, Iron Ascent)
-- Guided workout flow with timers and reps
-- Levels, XP bar, streaks, and achievements (localStorage)
-
-Progress is sample/local-only until the Node backend lands.
+Counts are stored in `localStorage` on this device.
