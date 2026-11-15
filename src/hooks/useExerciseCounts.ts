@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useCallback, useEffect, useState } from 'react'
 import { EXERCISES, type ExerciseId } from '../data/exercises'
 
@@ -12,23 +13,34 @@ function emptyCounts(): Counts {
   }, {} as Counts)
 }
 
-function loadCounts(): Counts {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return emptyCounts()
-    const parsed = JSON.parse(raw) as Partial<Counts>
-    return { ...emptyCounts(), ...parsed }
-  } catch {
-    return emptyCounts()
-  }
-}
-
 export function useExerciseCounts() {
-  const [counts, setCounts] = useState<Counts>(() => loadCounts())
+  const [counts, setCounts] = useState<Counts>(emptyCounts)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(counts))
-  }, [counts])
+    let cancelled = false
+    ;(async () => {
+      try {
+        const raw = await AsyncStorage.getItem(STORAGE_KEY)
+        if (!cancelled && raw) {
+          const parsed = JSON.parse(raw) as Partial<Counts>
+          setCounts({ ...emptyCounts(), ...parsed })
+        }
+      } catch {
+        // keep defaults
+      } finally {
+        if (!cancelled) setReady(true)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!ready) return
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(counts)).catch(() => {})
+  }, [counts, ready])
 
   const addReps = useCallback((id: ExerciseId, amount: number) => {
     if (!Number.isFinite(amount) || amount <= 0) return
@@ -40,5 +52,5 @@ export function useExerciseCounts() {
     setCounts(emptyCounts())
   }, [])
 
-  return { counts, addReps, resetAll }
+  return { counts, ready, addReps, resetAll }
 }
