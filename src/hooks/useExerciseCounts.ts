@@ -2,9 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useCallback, useEffect, useState } from 'react'
 import { EXERCISES, type ExerciseId } from '../data/exercises'
 
-const STORAGE_KEY = 'fitgame-counts-v1'
-
 export type Counts = Record<ExerciseId, number>
+
+function storageKey(userId?: number) {
+  return userId != null ? `fitgame-counts-v1-user-${userId}` : 'fitgame-counts-v1'
+}
 
 function emptyCounts(): Counts {
   return EXERCISES.reduce((acc, ex) => {
@@ -13,21 +15,26 @@ function emptyCounts(): Counts {
   }, {} as Counts)
 }
 
-export function useExerciseCounts() {
+export function useExerciseCounts(userId?: number) {
   const [counts, setCounts] = useState<Counts>(emptyCounts)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     let cancelled = false
+    setReady(false)
     ;(async () => {
       try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY)
-        if (!cancelled && raw) {
-          const parsed = JSON.parse(raw) as Partial<Counts>
-          setCounts({ ...emptyCounts(), ...parsed })
+        const raw = await AsyncStorage.getItem(storageKey(userId))
+        if (!cancelled) {
+          if (raw) {
+            const parsed = JSON.parse(raw) as Partial<Counts>
+            setCounts({ ...emptyCounts(), ...parsed })
+          } else {
+            setCounts(emptyCounts())
+          }
         }
       } catch {
-        // keep defaults
+        if (!cancelled) setCounts(emptyCounts())
       } finally {
         if (!cancelled) setReady(true)
       }
@@ -35,12 +42,12 @@ export function useExerciseCounts() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     if (!ready) return
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(counts)).catch(() => {})
-  }, [counts, ready])
+    AsyncStorage.setItem(storageKey(userId), JSON.stringify(counts)).catch(() => {})
+  }, [counts, ready, userId])
 
   const addReps = useCallback((id: ExerciseId, amount: number) => {
     if (!Number.isFinite(amount) || amount <= 0) return
