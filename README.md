@@ -1,21 +1,46 @@
 # FitGame
 
-Mobile exercise ranking app with accounts.
+Exercise ranking app with accounts. **Run it in the browser** (easiest).
 
 ## Stack
 
-| Layer | Tech | Status |
-|-------|------|--------|
-| Mobile app | **React Native (Expo)** | Login, create account, ranks |
-| Backend | **Node.js (Express)** | Auth API + SQLite users |
-| Native iOS | **Swift** | Later |
+| Layer | Tech |
+|-------|------|
+| App | React Native (Expo) — web + mobile |
+| Backend | Node.js (Express + SQLite) |
+| Native iOS | Swift — later |
+
+## Run (web)
+
+Use **2 terminal tabs**. One command at a time.
+
+### Terminal 1 — API
+
+```bash
+cd ~/FitGame/server
+npm install
+npm run dev
+```
+
+Leave it running. Check: `curl http://127.0.0.1:3001/health`
+
+### Terminal 2 — App in browser
+
+```bash
+cd ~/FitGame
+npm install
+npm start
+```
+
+Your browser should open the app (or go to the URL Expo prints, usually `http://localhost:8081`).
+
+Login / create account, then log reps and climb ranks.
 
 ## Product
 
-- Create an account / log in
-- Log reps for: pushups, situps, leg raises, bicep curls, pullups
+- Create account / log in
+- Exercises: pushups, situps, leg raises, bicep curls, pullups
 - Ranks: Bronze → Silver → Gold → Diamond → Champion
-- Progress bar to the next rank
 
 | Rank | Min lifetime reps |
 |------|-------------------|
@@ -24,41 +49,3 @@ Mobile exercise ranking app with accounts.
 | Gold | 1,000 |
 | Diamond | 5,000 |
 | Champion | 15,000 |
-
-## Run
-
-### 1. API (Node)
-
-```bash
-cd server
-npm install
-npm run dev
-```
-
-API: `http://localhost:3001`
-
-### 2. Mobile app
-
-```bash
-# from repo root
-npm install
-npx expo start
-```
-
-On a physical phone, point the app at your computer:
-
-```bash
-EXPO_PUBLIC_API_URL=http://YOUR_LAN_IP:3001 npx expo start
-```
-
-Browser preview of the RN UI:
-
-```bash
-npx expo start --web
-```
-
-## Auth endpoints
-
-- `POST /auth/register` `{ email, password, displayName }`
-- `POST /auth/login` `{ email, password }`
-- `GET /auth/me` (Bearer token)
