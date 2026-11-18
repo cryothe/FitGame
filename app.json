@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "FitGame",
+    "slug": "fitgame",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a1210"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fitgame.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0a1210",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.fitgame.app",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
